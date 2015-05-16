@@ -21,30 +21,34 @@ function container:collect(module)
 		if self.modules[v] == nil then
 			self.modules[v] = {}
 		end
-		
+
 		table.insert(self.modules[v], module)
 	end
 end
 
 function container:get(interfaceName)
 	local possibleModules = self.modules[interfaceName] or {}
-	
+
 	print("get " .. interfaceName)
-	
+
 	for _, module in pairs(possibleModules) do
 		-- Get dependencies of this module 
 		local dependencies = module.dependencies
-		
+
 		for _, dependency in pairs(dependencies) do
-			local resolved = self:get(dependency)
-			
+			local resolved = self:get(dependency.interface)
+
 			if not resolved then
-				error(string.format("Cannot resolve dependency '%s'", dependency))
+				error(string.format("Cannot resolve dependency '%s'", dependency.interface))
 			end
-			
-			module:inject(dependency, resolved)
+
+			module:inject(dependency.interface, resolved, dependency.multiple)
+
+			if(not dependency.multiple) then 
+				break 
+			end
 		end
-		
+
 		return module.module
 	end
 end

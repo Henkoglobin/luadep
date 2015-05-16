@@ -15,8 +15,16 @@ function module.new(mod)
 		module = mod,
 		interfaces = {},
 		dependencies = {},
-		inject = function(self, interface, module)
-			self.module[interface] = module
+		inject = function(self, interface, module, allowMultiple)
+			if allowMultiple then
+				if self.module[interface] == nil then
+					self.module[interface] = {}
+				end
+
+				table.insert(self.module[interface], module)
+			else
+				self.module[interface] = module
+			end
 		end
 	}
 	
@@ -25,19 +33,22 @@ end
 
 function module:isA(interfaceName)
 	table.insert(self.interfaces, interfaceName)
-	
+
 	return self
 end
 
-function module:dependsOn(interfaceName)
-	table.insert(self.dependencies, interfaceName)
-	
+function module:dependsOn(interfaceName, multiple)
+	table.insert(self.dependencies, {
+		interface = interfaceName,
+		multiple = multiple or false
+	})
+
 	return self
 end
 
 function module:onInject(func)
 	module.inject = func
-	
+
 	return self
 end
 
