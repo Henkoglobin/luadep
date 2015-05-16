@@ -14,7 +14,10 @@ function module.new(mod)
 	local temp = {
 		module = mod,
 		interfaces = {},
-		dependencies = {}
+		dependencies = {},
+		inject = function(self, interface, module)
+			self.module[interface] = module
+		end
 	}
 	
 	return setmetatable(temp, module)
@@ -28,6 +31,12 @@ end
 
 function module:dependsOn(interfaceName)
 	table.insert(self.dependencies, interfaceName)
+	
+	return self
+end
+
+function module:onInject(func)
+	module.inject = func
 	
 	return self
 end
