@@ -12,7 +12,8 @@ container.__index = container
 
 function container.new()
 	return {
-		modules = {}
+		modules = {},
+		finished = {}
 	}
 end
 
@@ -30,6 +31,10 @@ function container:get(interfaceName)
 	local candidates = self.modules[interfaceName] or {}
 
 	for _, module in pairs(candidates) do
+		if self.finished[module] then
+			return module.module
+		end
+
 		-- Get dependencies of this module 
 		local dependencies = module.dependencies
 
@@ -46,6 +51,8 @@ function container:get(interfaceName)
 				break 
 			end
 		end
+
+		self.finished[module] = true
 
 		return module.module
 	end
