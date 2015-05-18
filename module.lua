@@ -47,7 +47,7 @@ function module:dependsOn(interfaceName, multiple)
 end
 
 function module:onInject(func)
-	module.inject = func
+	self.inject = func
 
 	return self
 end
