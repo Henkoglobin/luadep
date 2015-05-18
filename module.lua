@@ -12,6 +12,8 @@ module.__index = module
 
 function module.new(mod)
 	local temp = {
+		name = "unknown module",
+		version = "(unknown version)",
 		module = mod,
 		interfaces = {},
 		dependencies = {},
@@ -49,6 +51,18 @@ end
 function module:onInject(func)
 	self.inject = func
 
+	return self
+end
+
+function module:setName(name)
+	self.name = name
+	
+	return self
+end
+
+function module:setVersion(version)
+	self.version = version
+	
 	return self
 end
 

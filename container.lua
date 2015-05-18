@@ -42,7 +42,7 @@ function container:get(interfaceName)
 			local resolved = self:get(dependency.interface)
 
 			if not resolved then
-				error(string.format("Cannot resolve dependency '%s'", dependency.interface))
+				error(string.format("Cannot resolve dependency '%s' of module %s %s", dependency.interface, module.name, module.version))
 			end
 
 			module:inject(dependency.interface, resolved, dependency.multiple)
