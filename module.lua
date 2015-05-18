@@ -17,7 +17,7 @@ function module.new(mod)
 		dependencies = {},
 		inject = function(self, interface, module, allowMultiple)
 			if allowMultiple then
-				if self.module[interface] == nil then
+				if not self.module[interface] then
 					self.module[interface] = {}
 				end
 

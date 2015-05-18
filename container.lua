@@ -17,21 +17,19 @@ function container.new()
 end
 
 function container:collect(module)
-	for _, v in pairs(module.interfaces) do
-		if self.modules[v] == nil then
-			self.modules[v] = {}
+	for _, interfaceName in pairs(module.interfaces) do
+		if self.modules[interfaceName] == nil then
+			self.modules[interfaceName] = {}
 		end
 
-		table.insert(self.modules[v], module)
+		table.insert(self.modules[interfaceName], module)
 	end
 end
 
 function container:get(interfaceName)
-	local possibleModules = self.modules[interfaceName] or {}
+	local candidates = self.modules[interfaceName] or {}
 
-	print("get " .. interfaceName)
-
-	for _, module in pairs(possibleModules) do
+	for _, module in pairs(candidates) do
 		-- Get dependencies of this module 
 		local dependencies = module.dependencies
 
@@ -44,7 +42,7 @@ function container:get(interfaceName)
 
 			module:inject(dependency.interface, resolved, dependency.multiple)
 
-			if(not dependency.multiple) then 
+			if not dependency.multiple then 
 				break 
 			end
 		end
