@@ -45,7 +45,7 @@ function container:get(interfaceName)
 				error(string.format("Cannot resolve dependency '%s' of module %s %s", dependency.interface, module.name, module.version))
 			end
 
-			module:inject(dependency.interface, resolved, dependency.multiple)
+			module.inject(module.module, dependency.interface, resolved, dependency.multiple)
 
 			if not dependency.multiple then 
 				break 

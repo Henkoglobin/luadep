@@ -19,13 +19,13 @@ function module.new(mod)
 		dependencies = {},
 		inject = function(self, interface, module, allowMultiple)
 			if allowMultiple then
-				if not self.module[interface] then
-					self.module[interface] = {}
+				if not self[interface] then
+					self[interface] = {}
 				end
 
-				table.insert(self.module[interface], module)
+				table.insert(self[interface], module)
 			else
-				self.module[interface] = module
+				self[interface] = module
 			end
 		end
 	}
