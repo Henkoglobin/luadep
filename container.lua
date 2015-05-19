@@ -18,17 +18,17 @@ function container.new()
 end
 
 function container:collect(module)
-	for _, interfaceName in pairs(module.interfaces) do
-		if self.modules[interfaceName] == nil then
-			self.modules[interfaceName] = {}
+	for _, interface in pairs(module.interfaces) do
+		if self.modules[interface] == nil then
+			self.modules[interface] = {}
 		end
 
-		table.insert(self.modules[interfaceName], module)
+		table.insert(self.modules[interface], module)
 	end
 end
 
-function container:get(interfaceName)
-	local candidates = self.modules[interfaceName] or {}
+function container:get(interface)
+	local candidates = self.modules[interface] or {}
 
 	for _, module in pairs(candidates) do
 		if self.finished[module] then

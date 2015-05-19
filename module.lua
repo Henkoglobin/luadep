@@ -33,15 +33,15 @@ function module.new(mod)
 	return setmetatable(temp, module)
 end
 
-function module:isA(interfaceName)
-	table.insert(self.interfaces, interfaceName)
+function module:isA(interface)
+	table.insert(self.interfaces, interface)
 
 	return self
 end
 
-function module:dependsOn(interfaceName, multiple)
+function module:dependsOn(interface, multiple)
 	table.insert(self.dependencies, {
-		interface = interfaceName,
+		interface = interface,
 		multiple = multiple or false
 	})
 
