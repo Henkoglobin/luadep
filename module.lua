@@ -10,6 +10,17 @@ local module = setmetatable({}, {
 
 module.__index = module
 
+local function parse(input)
+	input = input or "1"
+
+	local min, max = input:match("^(%d?)%.*([%d%*])")
+
+	return {
+		allowMultiple = max == "*",
+		allowNone = min == "0"
+	}
+end
+
 function module.new(mod)
 	local temp = {
 		name = "unknown module",
@@ -17,8 +28,8 @@ function module.new(mod)
 		module = mod,
 		interfaces = {},
 		dependencies = {},
-		inject = function(self, interface, module, allowMultiple)
-			if allowMultiple then
+		inject = function(self, interface, module, definition)
+			if definition.allowMultiple then
 				if not self[interface] then
 					self[interface] = {}
 				end
@@ -39,10 +50,13 @@ function module:isA(interface)
 	return self
 end
 
-function module:dependsOn(interface, multiple)
+function module:dependsOn(interface, settings)
+	local parsedSettings = parse(settings)
+
 	table.insert(self.dependencies, {
 		interface = interface,
-		multiple = multiple or false
+		allowMultiple = parsedSettings.allowMultiple,
+		allowNone = parsedSettings.allowNone
 	})
 
 	return self

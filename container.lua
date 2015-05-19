@@ -27,35 +27,60 @@ function container:collect(module)
 	end
 end
 
-function container:get(interface)
+function container:get(interface, multiple)
 	local candidates = self.modules[interface] or {}
-
+	local ret = {}
+	
 	for _, module in pairs(candidates) do
 		if self.finished[module] then
-			return module.module
+			if multiple then
+				table.insert(ret, module.module)
+			else
+				return module.module
+			end
 		end
 
 		-- Get dependencies of this module 
 		local dependencies = module.dependencies
 
 		for _, dependency in pairs(dependencies) do
-			local resolved = self:get(dependency.interface)
+			local resolved = self:get(dependency.interface, dependency.allowMultiple)
 
-			if not resolved then
+			if resolved then
+				if not next(resolved) then
+					if dependency.allowNone then
+						-- Initialize the property nonetheless by injecting nil
+						module.inject(module.module, dependency.interface, nil, dependency)
+					else
+						error(string.format("Cannot resolve dependency '%s' of module %s %s", dependency.interface, module.name, module.version))
+					end
+				end
+
+				if dependency.allowMultiple then
+					for _, resolvedModule in pairs(resolved) do
+						module.inject(module.module, dependency.interface, resolvedModule, dependency)
+					end
+				else
+					module.inject(module.module, dependency.interface, resolved, dependency)
+				end
+			elseif not dependency.allowNone then
 				error(string.format("Cannot resolve dependency '%s' of module %s %s", dependency.interface, module.name, module.version))
-			end
-
-			module.inject(module.module, dependency.interface, resolved, dependency.multiple)
-
-			if not dependency.multiple then 
-				break 
 			end
 		end
 
 		self.finished[module] = true
 
-		return module.module
+		if multiple then
+			table.insert(ret, module.module)
+		else
+			return module.module
+		end
 	end
+	
+	-- If we reach this point,
+	-- a: multiple was true ==> return table
+	-- b: multiple was false, but no module was found ==> return nil
+	return multiple and ret or nil
 end
 
 return container
