@@ -13,7 +13,14 @@ module.__index = module
 local function parse(input)
 	input = input or "1"
 
-	local min, max = input:match("^(%d?)%.*([%d%*])")
+	local min, max = input:match("^([01]?)%.%.([1%*])")
+
+	if not min then
+		min = input:match("[01%*]")
+		max = min == "*" and "*" or "1"
+	end
+
+	print("Parsed:", min or "(nil)", max or "(nil)")
 
 	return {
 		allowMultiple = max == "*",
