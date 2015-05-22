@@ -36,8 +36,9 @@ myContainer:collect(cheesecake)
 local ok, missing = myContainer:validate()
 
 if not ok then
+  print("Missing (module, interface):")
 	for moduleName, interface in pairs(missing) do
-		print(moduleName, interface)
+		print(moduleName, ", ", interface)
 	end
 end
 
