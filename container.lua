@@ -96,7 +96,7 @@ function container:validate()
 			for _, definition in pairs(module.dependencies) do
 				print("Checking definition " .. definition.interface)
 
-				if not self.modules[definition.interface] then
+				if not definition.allowNone and not self.modules[definition.interface] then
 					missing[module.name] = definition.interface
 				end
 			end
