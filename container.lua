@@ -83,4 +83,27 @@ function container:get(interface, multiple)
 	return multiple and ret or nil
 end
 
+function container:validate()
+	local missing = {}
+
+	for interface, modules in pairs(self.modules) do
+		print("Checking " .. interface)
+
+		for _, module in pairs(modules) do
+			print("Checking module " .. module.name)
+
+			-- check every dependency of current module
+			for _, definition in pairs(module.dependencies) do
+				print("Checking definition " .. definition.interface)
+
+				if not self.modules[definition.interface] then
+					missing[module.name] = definition.interface
+				end
+			end
+		end
+	end
+
+	return not next(missing), missing
+end
+
 return container
