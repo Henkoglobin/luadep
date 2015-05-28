@@ -13,7 +13,19 @@ module.__index = module
 local function parse(input)
 	input = input or "1"
 
-	local min, max = input:match("^(%d?)%.*([%d%*])")
+	local min, max = input:match("^([01]?)%.%.([1%*])$")
+
+	-- Check if the input could be parsed in the first pass
+	if not min then
+		min = input:match("^[1%*]$")
+		max = min == "*" and "*" or "1"
+	end
+
+	-- If neither the first nor the second pass where successful,
+	-- input is not well-formatted.
+	if not min then
+		error("Could not parse multiplicity", 3)
+	end
 
 	return {
 		allowMultiple = max == "*",

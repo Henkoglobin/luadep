@@ -26,9 +26,21 @@ local cheesecake = module({
 	:isA("Recipe")
 
 local myContainer = container()
+
+-- Feel free to try out the capabilities of luadep by 
+-- commenting/uncommenting the following lines
 myContainer:collect(recipeBook)
 myContainer:collect(pancakes)
 myContainer:collect(cheesecake)
+
+local ok, missing = myContainer:validate()
+
+if not ok then
+  print("Missing (module, interface):")
+	for moduleName, interface in pairs(missing) do
+		print(moduleName, ", ", interface)
+	end
+end
 
 local myRecipes = myContainer:get("RecipeBook")
 
